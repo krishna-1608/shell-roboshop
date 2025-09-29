@@ -36,7 +36,7 @@ id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
     else
-    echo -e "user alredy exists....$y SKIPPING $N"
+    echo -e "user alredy exists....$Y SKIPPING $N"
 fi
 
 
