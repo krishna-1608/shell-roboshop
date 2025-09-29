@@ -22,7 +22,7 @@ VALIDATE(){   #functions recive inputs through arhs jut like shell script argume
     if [ $1 -ne 0 ]; then
         echo -e "  $2 is $R failuer $N" | tee -a $LOG_FILE  #tee command will read and print terminal and sends to logs 
         exit 1 # if it is failed stop script excution
-    else
+    else 
         echo -e "$2 is $G success $N"  | tee -a $LOG_FILE  
     fi
 }
