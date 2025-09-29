@@ -79,8 +79,13 @@ VALIDATE $? "copy mango repo"
 dnf install mongodb-mongosh -y &>>$LOG_FILE
 VALIDATE $? "install mogodb client"
 
-mongosh --host mongodb.krishna.icu </app/db/master-data.js &>>$LOG_FILE
-VALIDATE $? "Load catalogue Products"
+INDEX=$(mongosh mongodb.krishna.icu --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')")
+if [ $INDEX -le 0 ]; then
+    mongosh --host mongodb.krishna.icu </app/db/master-data.js &>>$LOG_FILE
+    VALIDATE $? "Load catalogue products"
+else
+    echo -e "Catalogue products already loaded ... $Y SKIPPING $N"
+fi
 
 systemctl restart catalogue
 VALIDATE $? "restart catalogue"
