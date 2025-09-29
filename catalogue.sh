@@ -8,6 +8,7 @@ N="\e[0m"
 
 LOG_FOLDER="/var/log/shell-roboshop"
 SCRIPT_FILE=$( echo $0 | cut -d '.' -f1 )
+SCRIPT_DIR=$PWD
 LOG_FILE="$LOG_FOLDER/$SCRIPT_FILE.log" # /var/log/shell-script/12-logs.log
 
 mkdir -p $LOG_FOLDER
@@ -37,11 +38,20 @@ VALIDATE $? "Enabling NodeJS"
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Installing NodeJS"
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-VALIDATE $? "Creating sysytem user"
+id roboshop &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+    VALIDATE $? "Creating sysytem user"
+else
+    echo -e "user alredy exists....$y SKIPPING $N"
+fi
 
-mkdir /app 
+
+mkdir -p /app 
 VALIDATE $? "Creating app directory"
+
+rm -rf /app/*
+VALIDATE $? "Removing existing code"
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
 VALIDATE $? "Downloading cataalogue application"
@@ -55,7 +65,7 @@ VALIDATE $? "unzip catalogue"
 npm install &>>$LOG_FILE
 VALIDATE $? "installing depndencies" 
 
-cp catalogue.service /etc/systemd/system/catalogue.service
+cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service
 VALIDATE $? "copy sysytemctl service"
 
 systemctl daemon-reload
