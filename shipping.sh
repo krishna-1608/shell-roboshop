@@ -63,6 +63,7 @@ systemctl daemon-reload
 systemctl enable shipping  &>>$LOG_FILE
 
 dnf install mysql -y  &>>$LOG_FILE
+VALIDATE $? "mysql client installed"
 
 mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'use cities' &>>$LOG_FILE
 if [ $? -ne 0 ]; then
@@ -74,3 +75,4 @@ else
 fi
 
 systemctl restart shipping
+VALIDATE $? "shipping service started"
